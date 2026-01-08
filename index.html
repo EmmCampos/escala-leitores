@@ -252,19 +252,71 @@
             .pdf-header {
                 display: block;
                 text-align: center;
-                margin-bottom: 20px;
-                border-bottom: 2px solid var(--color-primary);
-                padding-bottom: 15px;
+                margin-bottom: 30px;
+                padding: 20px 0;
+                border-top: 4px solid var(--color-primary);
+                border-bottom: 4px solid var(--color-primary);
+                background: linear-gradient(135deg, rgba(33, 128, 160, 0.05) 0%, rgba(33, 128, 160, 0.02) 100%);
+            }
+            .pdf-header img {
+                margin: 0 15px;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
             }
             .pdf-header h2 {
                 color: var(--color-primary);
-                font-size: 18px;
-                margin-bottom: 5px;
+                font-size: 22px;
+                font-weight: 700;
+                margin: 15px 0 10px 0;
+                letter-spacing: 0.5px;
             }
             .pdf-header p {
                 font-size: 12px;
-                color: #666;
-                margin: 2px 0;
+                color: #555;
+                margin: 4px 0;
+                font-weight: 500;
+            }
+            .pdf-header p:first-of-type {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--color-primary);
+                margin-top: 12px;
+            }
+            table {
+                margin-top: 20px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            thead {
+                background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+                font-weight: 700;
+                letter-spacing: 0.3px;
+            }
+            th {
+                padding: 14px 12px;
+                border: none;
+            }
+            td {
+                padding: 12px;
+                border: none;
+                border-bottom: 1px solid #E8E8E8;
+            }
+            tbody tr {
+                background: white;
+            }
+            tbody tr:nth-child(odd) {
+                background-color: #FAFAFA;
+            }
+            tbody tr:last-child td {
+                border-bottom: none;
+            }
+            .cell-dia {
+                font-weight: 700;
+                color: var(--color-primary);
+            }
+            .cell-dia-semana {
+                font-weight: 600;
+                color: #333;
             }
         }
 
@@ -326,6 +378,7 @@
             <button class="tab-btn active" onclick="switchTab('tab-11h')">11h15min Semanal</button>
             <button class="tab-btn" onclick="switchTab('tab-18h')">18h Domingo</button>
             <button class="tab-btn" onclick="switchTab('tab-19h')">19h Seg-Sáb</button>
+            <button class="tab-btn" onclick="switchTab('tab-cronograma')">📅 Meu Cronograma</button>
             <button class="tab-btn" onclick="switchTab('tab-nomes')">📋 Nomes</button>
         </div>
 
@@ -435,6 +488,59 @@
                 </table>
             </div>
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+        </div>
+
+        <!-- ABA MEU CRONOGRAMA -->
+        <div id="tab-cronograma" class="tab-content">
+            <div class="controls">
+                <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+                    <div>
+                        <label style="font-weight: 600; color: var(--color-text); display: block; margin-bottom: 8px;">Selecione seu Nome:</label>
+                        <select id="selecionarLeitor" style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 4px; font-size: 14px; width: 250px;">
+                            <option value="">— Escolha um leitor —</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: var(--color-text); display: block; margin-bottom: 8px;">Filtrar por Horário:</label>
+                        <div style="display: flex; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                                <input type="checkbox" id="filtro11h" checked> 11:15
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                                <input type="checkbox" id="filtro18h" checked> 18h
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                                <input type="checkbox" id="filtro19h" checked> 19h
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="visualizarCronograma()" style="margin-top: 12px;">🔍 Visualizar Meu Cronograma</button>
+                <button class="btn btn-primary" id="btnDownloadPDFCronograma" onclick="downloadPDFCronograma()" style="margin-top: 12px; display: none;">📄 Baixar PDF</button>
+                <button class="btn btn-primary" id="btnDownloadExcelCronograma" onclick="downloadExcelCronograma()" style="margin-top: 12px; display: none;">📥 Baixar Excel</button>
+            </div>
+            <div id="containerCronograma" style="display: none; margin-top: 20px;">
+                <div style="background: #E3F2FD; padding: 16px; border-radius: 4px; margin-bottom: 16px; border-left: 4px solid var(--color-primary);">
+                    <h3 style="margin: 0 0 8px 0; color: var(--color-primary);" id="nomeLeitorcronograma"></h3>
+                    <p style="margin: 0; font-size: 13px; color: #555;" id="resumoCronograma"></p>
+                </div>
+                <div class="table-container">
+                    <table id="tabelaCronograma">
+                        <thead>
+                            <tr>
+                                <th>DIA</th>
+                                <th>DIA SEMANA</th>
+                                <th>HORÁRIO</th>
+                                <th>CARGO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyCronograma"></tbody>
+                    </table>
+                </div>
+                <div id="avisoSemEscalas" style="display: none; background: #FFF3E0; padding: 16px; border-radius: 4px; border-left: 4px solid #FF9800; margin-top: 16px;">
+                    <p style="margin: 0; color: #E65100; font-weight: 500;">⚠️ Este leitor não possui escalas no mês selecionado.</p>
+                </div>
+            </div>
         </div>
 
         <!-- ABA NOMES -->
@@ -1011,11 +1117,11 @@
             
             const element = document.getElementById(tabId).parentElement;
             const opt = {
-                margin: 10,
-                filename: `Escala_${aba}_${nomesMeses[mesAtual]}2026.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+                margin: 15,
+                filename: `Escala_${aba}_${nomesMeses[mesAtual]}_2026.pdf`,
+                image: { type: 'jpeg', quality: 0.99 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4', compress: true }
             };
             html2pdf().set(opt).from(element).save();
         }
@@ -1064,10 +1170,10 @@
             mesAtual = parseInt(document.getElementById("mesSelecionado").value);
             document.getElementById("mesAtual").textContent = `${nomesMeses[mesAtual]} 2026`;
             atualizarHeaderPDF();
+            carregarDados();
             renderTabela11h();
             renderTabela18h();
             renderTabela19h();
-            carregarDados();
         }
 
         function renderTabela18h() {
@@ -1104,12 +1210,12 @@
 
         function salvarDados() {
             const linhasAtuais = diasPorMes[mesAtual];
-            const { missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
+            const { missa11h, missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
             
             // Salvar dados 11h
-            linhasAtuais.forEach((_, idx) => {
+            missa11h.forEach((_, idx) => {
                 cargos.forEach(cargo => {
-                    const celId = `${mesAtual}-${idx}-${cargo}`;
+                    const celId = `${mesAtual}-11h-${idx}-${cargo}`;
                     const select = document.getElementById(celId);
                     if (select && select.closest("#tbody-11h")) {
                         dados11h[celId] = select.value;
@@ -1154,15 +1260,150 @@
                 dados11h = obj.dados11h || {};
                 dados18h = obj.dados18h || {};
                 dados19h = obj.dados19h || {};
-                if (obj.mesAtual) {
-                    mesAtual = obj.mesAtual;
-                    document.getElementById("mesSelecionado").value = mesAtual;
-                    document.getElementById("mesAtual").textContent = `${nomesMeses[mesAtual]} 2026`;
-                }
             }
         }
 
+        // Funções para Cronograma Personalizado
+        function popularSeletorLeitores() {
+            const select = document.getElementById("selecionarLeitor");
+            select.innerHTML = '<option value="">— Escolha um leitor —</option>';
+            nomes.forEach(nome => {
+                const opt = document.createElement("option");
+                opt.value = nome;
+                opt.textContent = nome;
+                select.appendChild(opt);
+            });
+        }
+
+        function visualizarCronograma() {
+            const leitor = document.getElementById("selecionarLeitor").value;
+            if (!leitor) {
+                alert("Por favor, selecione um leitor!");
+                return;
+            }
+
+            const linhasAtuais = diasPorMes[mesAtual];
+            const { missa11h, missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
+            
+            const filtro11h = document.getElementById("filtro11h").checked;
+            const filtro18h = document.getElementById("filtro18h").checked;
+            const filtro19h = document.getElementById("filtro19h").checked;
+
+            const escalas = [];
+
+            // Coletar escalas do leitor
+            missa11h.forEach((linha, idx) => {
+                if (filtro11h) {
+                    const [dia, diaSemana] = linha;
+                    cargos.forEach(cargo => {
+                        const celId = `${mesAtual}-11h-${idx}-${cargo}`;
+                        if (dados11h[celId] === leitor) {
+                            escalas.push({
+                                dia, diaSemana, horario: "11:15", cargo
+                            });
+                        }
+                    });
+                }
+            });
+
+            missa18h.forEach((linha, idx) => {
+                if (filtro18h) {
+                    const [dia, diaSemana] = linha;
+                    cargos.forEach(cargo => {
+                        const celId = `${mesAtual}-18h-${idx}-${cargo}`;
+                        if (dados18h[celId] === leitor) {
+                            escalas.push({
+                                dia, diaSemana, horario: "18:00", cargo
+                            });
+                        }
+                    });
+                }
+            });
+
+            missa19h.forEach((linha, idx) => {
+                if (filtro19h) {
+                    const [dia, diaSemana] = linha;
+                    cargos.forEach(cargo => {
+                        const celId = `${mesAtual}-19h-${idx}-${cargo}`;
+                        if (dados19h[celId] === leitor) {
+                            escalas.push({
+                                dia, diaSemana, horario: "19:00", cargo
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Ordenar por dia
+            escalas.sort((a, b) => parseInt(a.dia) - parseInt(b.dia));
+
+            // Exibir
+            document.getElementById("containerCronograma").style.display = "block";
+            document.getElementById("nomeLeitorcronograma").textContent = leitor;
+            document.getElementById("resumoCronograma").textContent = `Total de escalas em ${nomesMeses[mesAtual]} 2026: ${escalas.length}`;
+            
+            const tbody = document.getElementById("tbodyCronograma");
+            tbody.innerHTML = "";
+
+            if (escalas.length === 0) {
+                document.getElementById("avisoSemEscalas").style.display = "block";
+                document.getElementById("btnDownloadPDFCronograma").style.display = "none";
+                document.getElementById("btnDownloadExcelCronograma").style.display = "none";
+            } else {
+                document.getElementById("avisoSemEscalas").style.display = "none";
+                document.getElementById("btnDownloadPDFCronograma").style.display = "inline-block";
+                document.getElementById("btnDownloadExcelCronograma").style.display = "inline-block";
+
+                escalas.forEach(escala => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="cell-dia">${escala.dia}</td>
+                        <td class="cell-dia-semana">${escala.diaSemana}</td>
+                        <td style="font-weight: 500; color: var(--color-primary);">${escala.horario}</td>
+                        <td style="font-weight: 500;">${escala.cargo}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function downloadPDFCronograma() {
+            const leitor = document.getElementById("selecionarLeitor").value;
+            if (!leitor) return;
+
+            const element = document.getElementById("tabelaCronograma").parentElement;
+            const opt = {
+                margin: 15,
+                filename: `Cronograma_${leitor}_${nomesMeses[mesAtual]}_2026.pdf`,
+                image: { type: 'jpeg', quality: 0.99 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function downloadExcelCronograma() {
+            const leitor = document.getElementById("selecionarLeitor").value;
+            if (!leitor) return;
+
+            const tbody = document.getElementById("tbodyCronograma");
+            const rows = tbody.querySelectorAll("tr");
+            
+            let csv = "DIA,DIA SEMANA,HORÁRIO,CARGO\n";
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const valores = Array.from(cells).map(cell => `"${cell.textContent.trim()}"`);
+                csv += valores.join(",") + "\n";
+            });
+
+            const link = document.createElement("a");
+            link.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURIComponent(csv);
+            link.download = `Cronograma_${leitor}_${nomesMeses[mesAtual]}_2026.csv`;
+            link.click();
+        }
+
         carregarDados();
+        popularSeletorLeitores();
         atualizarHeaderPDF();
         renderTabela11h();
         renderTabela18h();

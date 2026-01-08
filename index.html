@@ -323,8 +323,9 @@
         <div class="success-message" id="successMsg">✓ Escala salva com sucesso!</div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab-11h')">11h15min</button>
-            <button class="tab-btn" onclick="switchTab('tab-18h')">18h-19h</button>
+            <button class="tab-btn active" onclick="switchTab('tab-11h')">11h15min Semanal</button>
+            <button class="tab-btn" onclick="switchTab('tab-18h')">18h Domingo</button>
+            <button class="tab-btn" onclick="switchTab('tab-19h')">19h Seg-Sáb</button>
             <button class="tab-btn" onclick="switchTab('tab-nomes')">📋 Nomes</button>
         </div>
 
@@ -364,11 +365,11 @@
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
         </div>
 
-        <!-- ABA 18h-19h -->
+        <!-- ABA 18h Domingo -->
         <div id="tab-18h" class="tab-content">
             <div class="controls">
-                <button class="btn btn-primary" onclick="downloadPDF('18h-19h')">📄 Baixar PDF</button>
-                <button class="btn btn-primary" onclick="downloadExcel('18h-19h')">📥 Baixar Excel</button>
+                <button class="btn btn-primary" onclick="downloadPDF('18h-domingo')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadExcel('18h-domingo')">📥 Baixar Excel</button>
                 <button class="btn btn-secondary" onclick="clearTab('tab-18h')">🔄 Limpar Tudo</button>
             </div>
             <div class="table-container">
@@ -381,14 +382,13 @@
                     <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
                     <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
                     <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
-                    <p style="margin-top: 10px; font-weight: bold;">Escala 18h-19h</p>
+                    <p style="margin-top: 10px; font-weight: bold;">Escala 18h Domingo</p>
                 </div>
                 <table id="table-18h">
                     <thead>
                         <tr>
                             <th>DIA</th>
                             <th>DIA SEMANA</th>
-                            <th>HORÁRIO</th>
                             <th>1ª LEITURA</th>
                             <th>SALMO</th>
                             <th>2ª LEITURA</th>
@@ -396,6 +396,42 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-18h"></tbody>
+                </table>
+            </div>
+            <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+        </div>
+
+        <!-- ABA 19h Segunda a Sábado -->
+        <div id="tab-19h" class="tab-content">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="downloadPDF('19h-segsab')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadExcel('19h-segsab')">📥 Baixar Excel</button>
+                <button class="btn btn-secondary" onclick="clearTab('tab-19h')">🔄 Limpar Tudo</button>
+            </div>
+            <div class="table-container">
+                <div class="pdf-header" id="pdfHeader19h">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                    </div>
+                    <h2>⛪ ESCALA DE LEITORES - JANEIRO 2026</h2>
+                    <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                    <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                    <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                    <p style="margin-top: 10px; font-weight: bold;">Escala 19h Segunda a Sábado</p>
+                </div>
+                <table id="table-19h">
+                    <thead>
+                        <tr>
+                            <th>DIA</th>
+                            <th>DIA SEMANA</th>
+                            <th>1ª LEITURA</th>
+                            <th>SALMO</th>
+                            <th>2ª LEITURA</th>
+                            <th>PRECES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-19h"></tbody>
                 </table>
             </div>
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
@@ -435,172 +471,172 @@
             "THIAGO", "TITA", "VALERIA", "VANDA", "VINICIOS", "VITORIA"
         ];
 
-        // Dados de todos os meses de 2026 - com todas as missas (seg-sex 19h, sábados 19h, domingos 07h e 18h)
+        // Dados de todos os meses de 2026 - com todas as missas (dom 11:15, dom 18h, seg-sab 19h)
         const diasPorMes = {
             1: [
                 ["01", "QUINTA", "19:00"], ["02", "SEXTA", "19:00"], ["03", "SÁBADO", "19:00"],
-                ["04", "DOMINGO", "07:00"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
+                ["04", "DOMINGO", "11:15"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
                 ["06", "TERÇA", "19:00"], ["07", "QUARTA", "19:00"], ["08", "QUINTA", "19:00"],
-                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "07:00"],
+                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "11:15"],
                 ["11", "DOMINGO", "18:00"], ["12", "SEGUNDA", "19:00"], ["13", "TERÇA", "19:00"],
                 ["14", "QUARTA", "19:00"], ["15", "QUINTA", "19:00"], ["16", "SEXTA", "19:00"],
-                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "07:00"], ["18", "DOMINGO", "18:00"],
+                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "11:15"], ["18", "DOMINGO", "18:00"],
                 ["19", "SEGUNDA", "19:00"], ["20", "TERÇA", "19:00"], ["21", "QUARTA", "19:00"],
                 ["22", "QUINTA", "19:00"], ["23", "SEXTA", "19:00"], ["24", "SÁBADO", "19:00"],
-                ["25", "DOMINGO", "07:00"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
+                ["25", "DOMINGO", "11:15"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
                 ["27", "TERÇA", "19:00"], ["28", "QUARTA", "19:00"], ["29", "QUINTA", "19:00"],
                 ["30", "SEXTA", "19:00"], ["31", "SÁBADO", "19:00"]
             ],
             2: [
-                ["01", "QUINTA", "19:00"], ["02", "SEGUNDA", "19:00"], ["03", "TERÇA", "19:00"],
-                ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"], ["06", "SEXTA", "19:00"],
-                ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"], ["08", "DOMINGO", "18:00"],
-                ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"], ["11", "QUARTA", "19:00"],
-                ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"], ["14", "SÁBADO", "19:00"],
-                ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"], ["16", "SEGUNDA", "19:00"],
-                ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"], ["19", "QUINTA", "19:00"],
-                ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"], ["22", "DOMINGO", "07:00"],
-                ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"], ["24", "TERÇA", "19:00"],
-                ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"], ["27", "SEXTA", "19:00"],
-                ["28", "SÁBADO", "19:00"]
-            ],
-            3: [
-                ["01", "DOMINGO", "07:00"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
+                ["01", "DOMINGO", "11:15"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
                 ["03", "TERÇA", "19:00"], ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"],
-                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"],
+                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "11:15"],
                 ["08", "DOMINGO", "18:00"], ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"],
                 ["11", "QUARTA", "19:00"], ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"],
-                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"],
+                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "11:15"], ["15", "DOMINGO", "18:00"],
                 ["16", "SEGUNDA", "19:00"], ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"],
                 ["19", "QUINTA", "19:00"], ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"],
-                ["22", "DOMINGO", "07:00"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
+                ["22", "DOMINGO", "11:15"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
                 ["24", "TERÇA", "19:00"], ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"],
-                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "07:00"],
+                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"]
+            ],
+            3: [
+                ["01", "DOMINGO", "11:15"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
+                ["03", "TERÇA", "19:00"], ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"],
+                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "11:15"],
+                ["08", "DOMINGO", "18:00"], ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"],
+                ["11", "QUARTA", "19:00"], ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"],
+                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "11:15"], ["15", "DOMINGO", "18:00"],
+                ["16", "SEGUNDA", "19:00"], ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"],
+                ["19", "QUINTA", "19:00"], ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"],
+                ["22", "DOMINGO", "11:15"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
+                ["24", "TERÇA", "19:00"], ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"],
+                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "11:15"],
                 ["29", "DOMINGO", "18:00"], ["30", "SEGUNDA", "19:00"], ["31", "TERÇA", "19:00"]
             ],
             4: [
                 ["01", "QUARTA", "19:00"], ["02", "QUINTA", "19:00"], ["03", "SEXTA", "19:00"],
-                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "07:00"], ["05", "DOMINGO", "18:00"],
+                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "11:15"], ["05", "DOMINGO", "18:00"],
                 ["06", "SEGUNDA", "19:00"], ["07", "TERÇA", "19:00"], ["08", "QUARTA", "19:00"],
                 ["09", "QUINTA", "19:00"], ["10", "SEXTA", "19:00"], ["11", "SÁBADO", "19:00"],
-                ["12", "DOMINGO", "07:00"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
+                ["12", "DOMINGO", "11:15"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
                 ["14", "TERÇA", "19:00"], ["15", "QUARTA", "19:00"], ["16", "QUINTA", "19:00"],
-                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "07:00"],
+                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "11:15"],
                 ["19", "DOMINGO", "18:00"], ["20", "SEGUNDA", "19:00"], ["21", "TERÇA", "19:00"],
                 ["22", "QUARTA", "19:00"], ["23", "QUINTA", "19:00"], ["24", "SEXTA", "19:00"],
-                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "07:00"], ["26", "DOMINGO", "18:00"],
+                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "11:15"], ["26", "DOMINGO", "18:00"],
                 ["27", "SEGUNDA", "19:00"], ["28", "TERÇA", "19:00"], ["29", "QUARTA", "19:00"],
                 ["30", "QUINTA", "19:00"]
             ],
             5: [
-                ["01", "SEXTA", "19:00"], ["02", "SÁBADO", "19:00"], ["03", "DOMINGO", "07:00"],
+                ["01", "SEXTA", "19:00"], ["02", "SÁBADO", "19:00"], ["03", "DOMINGO", "11:15"],
                 ["03", "DOMINGO", "18:00"], ["04", "SEGUNDA", "19:00"], ["05", "TERÇA", "19:00"],
                 ["06", "QUARTA", "19:00"], ["07", "QUINTA", "19:00"], ["08", "SEXTA", "19:00"],
-                ["09", "SÁBADO", "19:00"], ["10", "DOMINGO", "07:00"], ["10", "DOMINGO", "18:00"],
+                ["09", "SÁBADO", "19:00"], ["10", "DOMINGO", "11:15"], ["10", "DOMINGO", "18:00"],
                 ["11", "SEGUNDA", "19:00"], ["12", "TERÇA", "19:00"], ["13", "QUARTA", "19:00"],
                 ["14", "QUINTA", "19:00"], ["15", "SEXTA", "19:00"], ["16", "SÁBADO", "19:00"],
-                ["17", "DOMINGO", "07:00"], ["17", "DOMINGO", "18:00"], ["18", "SEGUNDA", "19:00"],
+                ["17", "DOMINGO", "11:15"], ["17", "DOMINGO", "18:00"], ["18", "SEGUNDA", "19:00"],
                 ["19", "TERÇA", "19:00"], ["20", "QUARTA", "19:00"], ["21", "QUINTA", "19:00"],
-                ["22", "SEXTA", "19:00"], ["23", "SÁBADO", "19:00"], ["24", "DOMINGO", "07:00"],
+                ["22", "SEXTA", "19:00"], ["23", "SÁBADO", "19:00"], ["24", "DOMINGO", "11:15"],
                 ["24", "DOMINGO", "18:00"], ["25", "SEGUNDA", "19:00"], ["26", "TERÇA", "19:00"],
                 ["27", "QUARTA", "19:00"], ["28", "QUINTA", "19:00"], ["29", "SEXTA", "19:00"],
-                ["30", "SÁBADO", "19:00"], ["31", "DOMINGO", "07:00"], ["31", "DOMINGO", "18:00"]
+                ["30", "SÁBADO", "19:00"], ["31", "DOMINGO", "11:15"], ["31", "DOMINGO", "18:00"]
             ],
             6: [
                 ["01", "SEGUNDA", "19:00"], ["02", "TERÇA", "19:00"], ["03", "QUARTA", "19:00"],
                 ["04", "QUINTA", "19:00"], ["05", "SEXTA", "19:00"], ["06", "SÁBADO", "19:00"],
-                ["07", "DOMINGO", "07:00"], ["07", "DOMINGO", "18:00"], ["08", "SEGUNDA", "19:00"],
+                ["07", "DOMINGO", "11:15"], ["07", "DOMINGO", "18:00"], ["08", "SEGUNDA", "19:00"],
                 ["09", "TERÇA", "19:00"], ["10", "QUARTA", "19:00"], ["11", "QUINTA", "19:00"],
-                ["12", "SEXTA", "19:00"], ["13", "SÁBADO", "19:00"], ["14", "DOMINGO", "07:00"],
+                ["12", "SEXTA", "19:00"], ["13", "SÁBADO", "19:00"], ["14", "DOMINGO", "11:15"],
                 ["14", "DOMINGO", "18:00"], ["15", "SEGUNDA", "19:00"], ["16", "TERÇA", "19:00"],
                 ["17", "QUARTA", "19:00"], ["18", "QUINTA", "19:00"], ["19", "SEXTA", "19:00"],
-                ["20", "SÁBADO", "19:00"], ["21", "DOMINGO", "07:00"], ["21", "DOMINGO", "18:00"],
+                ["20", "SÁBADO", "19:00"], ["21", "DOMINGO", "11:15"], ["21", "DOMINGO", "18:00"],
                 ["22", "SEGUNDA", "19:00"], ["23", "TERÇA", "19:00"], ["24", "QUARTA", "19:00"],
                 ["25", "QUINTA", "19:00"], ["26", "SEXTA", "19:00"], ["27", "SÁBADO", "19:00"],
-                ["28", "DOMINGO", "07:00"], ["28", "DOMINGO", "18:00"], ["29", "SEGUNDA", "19:00"],
+                ["28", "DOMINGO", "11:15"], ["28", "DOMINGO", "18:00"], ["29", "SEGUNDA", "19:00"],
                 ["30", "TERÇA", "19:00"]
             ],
             7: [
                 ["01", "QUARTA", "19:00"], ["02", "QUINTA", "19:00"], ["03", "SEXTA", "19:00"],
-                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "07:00"], ["05", "DOMINGO", "18:00"],
+                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "11:15"], ["05", "DOMINGO", "18:00"],
                 ["06", "SEGUNDA", "19:00"], ["07", "TERÇA", "19:00"], ["08", "QUARTA", "19:00"],
                 ["09", "QUINTA", "19:00"], ["10", "SEXTA", "19:00"], ["11", "SÁBADO", "19:00"],
-                ["12", "DOMINGO", "07:00"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
+                ["12", "DOMINGO", "11:15"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
                 ["14", "TERÇA", "19:00"], ["15", "QUARTA", "19:00"], ["16", "QUINTA", "19:00"],
-                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "07:00"],
+                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "11:15"],
                 ["19", "DOMINGO", "18:00"], ["20", "SEGUNDA", "19:00"], ["21", "TERÇA", "19:00"],
                 ["22", "QUARTA", "19:00"], ["23", "QUINTA", "19:00"], ["24", "SEXTA", "19:00"],
-                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "07:00"], ["26", "DOMINGO", "18:00"],
+                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "11:15"], ["26", "DOMINGO", "18:00"],
                 ["27", "SEGUNDA", "19:00"], ["28", "TERÇA", "19:00"], ["29", "QUARTA", "19:00"],
                 ["30", "QUINTA", "19:00"], ["31", "SEXTA", "19:00"]
             ],
             8: [
-                ["01", "SÁBADO", "19:00"], ["02", "DOMINGO", "07:00"], ["02", "DOMINGO", "18:00"],
+                ["01", "SÁBADO", "19:00"], ["02", "DOMINGO", "11:15"], ["02", "DOMINGO", "18:00"],
                 ["03", "SEGUNDA", "19:00"], ["04", "TERÇA", "19:00"], ["05", "QUARTA", "19:00"],
                 ["06", "QUINTA", "19:00"], ["07", "SEXTA", "19:00"], ["08", "SÁBADO", "19:00"],
-                ["09", "DOMINGO", "07:00"], ["09", "DOMINGO", "18:00"], ["10", "SEGUNDA", "19:00"],
+                ["09", "DOMINGO", "11:15"], ["09", "DOMINGO", "18:00"], ["10", "SEGUNDA", "19:00"],
                 ["11", "TERÇA", "19:00"], ["12", "QUARTA", "19:00"], ["13", "QUINTA", "19:00"],
-                ["14", "SEXTA", "19:00"], ["15", "SÁBADO", "19:00"], ["16", "DOMINGO", "07:00"],
+                ["14", "SEXTA", "19:00"], ["15", "SÁBADO", "19:00"], ["16", "DOMINGO", "11:15"],
                 ["16", "DOMINGO", "18:00"], ["17", "SEGUNDA", "19:00"], ["18", "TERÇA", "19:00"],
                 ["19", "QUARTA", "19:00"], ["20", "QUINTA", "19:00"], ["21", "SEXTA", "19:00"],
-                ["22", "SÁBADO", "19:00"], ["23", "DOMINGO", "07:00"], ["23", "DOMINGO", "18:00"],
+                ["22", "SÁBADO", "19:00"], ["23", "DOMINGO", "11:15"], ["23", "DOMINGO", "18:00"],
                 ["24", "SEGUNDA", "19:00"], ["25", "TERÇA", "19:00"], ["26", "QUARTA", "19:00"],
                 ["27", "QUINTA", "19:00"], ["28", "SEXTA", "19:00"], ["29", "SÁBADO", "19:00"],
-                ["30", "DOMINGO", "07:00"], ["30", "DOMINGO", "18:00"], ["31", "SEGUNDA", "19:00"]
+                ["30", "DOMINGO", "11:15"], ["30", "DOMINGO", "18:00"], ["31", "SEGUNDA", "19:00"]
             ],
             9: [
                 ["01", "TERÇA", "19:00"], ["02", "QUARTA", "19:00"], ["03", "QUINTA", "19:00"],
-                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "07:00"],
+                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "11:15"],
                 ["06", "DOMINGO", "18:00"], ["07", "SEGUNDA", "19:00"], ["08", "TERÇA", "19:00"],
                 ["09", "QUARTA", "19:00"], ["10", "QUINTA", "19:00"], ["11", "SEXTA", "19:00"],
-                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "07:00"], ["13", "DOMINGO", "18:00"],
+                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "11:15"], ["13", "DOMINGO", "18:00"],
                 ["14", "SEGUNDA", "19:00"], ["15", "TERÇA", "19:00"], ["16", "QUARTA", "19:00"],
                 ["17", "QUINTA", "19:00"], ["18", "SEXTA", "19:00"], ["19", "SÁBADO", "19:00"],
-                ["20", "DOMINGO", "07:00"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
+                ["20", "DOMINGO", "11:15"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
                 ["22", "TERÇA", "19:00"], ["23", "QUARTA", "19:00"], ["24", "QUINTA", "19:00"],
-                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "07:00"],
+                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "11:15"],
                 ["27", "DOMINGO", "18:00"], ["28", "SEGUNDA", "19:00"], ["29", "TERÇA", "19:00"],
                 ["30", "QUARTA", "19:00"]
             ],
             10: [
                 ["01", "QUINTA", "19:00"], ["02", "SEXTA", "19:00"], ["03", "SÁBADO", "19:00"],
-                ["04", "DOMINGO", "07:00"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
+                ["04", "DOMINGO", "11:15"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
                 ["06", "TERÇA", "19:00"], ["07", "QUARTA", "19:00"], ["08", "QUINTA", "19:00"],
-                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "07:00"],
+                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "11:15"],
                 ["11", "DOMINGO", "18:00"], ["12", "SEGUNDA", "19:00"], ["13", "TERÇA", "19:00"],
                 ["14", "QUARTA", "19:00"], ["15", "QUINTA", "19:00"], ["16", "SEXTA", "19:00"],
-                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "07:00"], ["18", "DOMINGO", "18:00"],
+                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "11:15"], ["18", "DOMINGO", "18:00"],
                 ["19", "SEGUNDA", "19:00"], ["20", "TERÇA", "19:00"], ["21", "QUARTA", "19:00"],
                 ["22", "QUINTA", "19:00"], ["23", "SEXTA", "19:00"], ["24", "SÁBADO", "19:00"],
-                ["25", "DOMINGO", "07:00"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
+                ["25", "DOMINGO", "11:15"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
                 ["27", "TERÇA", "19:00"], ["28", "QUARTA", "19:00"], ["29", "QUINTA", "19:00"],
                 ["30", "SEXTA", "19:00"], ["31", "SÁBADO", "19:00"]
             ],
             11: [
-                ["01", "DOMINGO", "07:00"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
+                ["01", "DOMINGO", "11:15"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
                 ["03", "TERÇA", "19:00"], ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"],
-                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"],
+                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "11:15"],
                 ["08", "DOMINGO", "18:00"], ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"],
                 ["11", "QUARTA", "19:00"], ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"],
-                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"],
+                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "11:15"], ["15", "DOMINGO", "18:00"],
                 ["16", "SEGUNDA", "19:00"], ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"],
                 ["19", "QUINTA", "19:00"], ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"],
-                ["22", "DOMINGO", "07:00"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
+                ["22", "DOMINGO", "11:15"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
                 ["24", "TERÇA", "19:00"], ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"],
-                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "07:00"],
+                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "11:15"],
                 ["29", "DOMINGO", "18:00"], ["30", "SEGUNDA", "19:00"]
             ],
             12: [
                 ["01", "TERÇA", "19:00"], ["02", "QUARTA", "19:00"], ["03", "QUINTA", "19:00"],
-                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "07:00"],
+                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "11:15"],
                 ["06", "DOMINGO", "18:00"], ["07", "SEGUNDA", "19:00"], ["08", "TERÇA", "19:00"],
                 ["09", "QUARTA", "19:00"], ["10", "QUINTA", "19:00"], ["11", "SEXTA", "19:00"],
-                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "07:00"], ["13", "DOMINGO", "18:00"],
+                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "11:15"], ["13", "DOMINGO", "18:00"],
                 ["14", "SEGUNDA", "19:00"], ["15", "TERÇA", "19:00"], ["16", "QUARTA", "19:00"],
                 ["17", "QUINTA", "19:00"], ["18", "SEXTA", "19:00"], ["19", "SÁBADO", "19:00"],
-                ["20", "DOMINGO", "07:00"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
+                ["20", "DOMINGO", "11:15"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
                 ["22", "TERÇA", "19:00"], ["23", "QUARTA", "19:00"], ["24", "QUINTA", "19:00"],
-                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "07:00"],
+                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "11:15"],
                 ["27", "DOMINGO", "18:00"], ["28", "SEGUNDA", "19:00"], ["29", "TERÇA", "19:00"],
                 ["30", "QUARTA", "19:00"], ["31", "QUINTA", "19:00"]
             ]
@@ -609,6 +645,7 @@
         let nomes = [...nomesPadroes];
         let dados11h = {};
         let dados18h = {};
+        let dados19h = {};
         let mesAtual = 1;
 
         const nomesMeses = [
@@ -617,6 +654,26 @@
         ];
 
         const cargos = ["1ª LEITURA", "SALMO", "2ª LEITURA", "PRECES"];
+
+        // Separar missas por horário
+        function separarMissasPorHorario(linhas) {
+            const missa11h = [];
+            const missa18h = [];
+            const missa19h = [];
+
+            linhas.forEach(linha => {
+                const [dia, diaSemana, horario] = linha;
+                if (horario === "11:15") {
+                    missa11h.push([dia, diaSemana]);
+                } else if (horario === "18:00") {
+                    missa18h.push([dia, diaSemana]);
+                } else if (horario === "19:00") {
+                    missa19h.push([dia, diaSemana]);
+                }
+            });
+
+            return { missa11h, missa18h, missa19h };
+        }
 
         function atualizarHeaderPDF() {
             const mesNome = nomesMeses[mesAtual];
@@ -629,7 +686,7 @@
                 <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
                 <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
                 <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
-                <p style="margin-top: 10px; font-weight: bold;">Escala 11h15min</p>
+                <p style="margin-top: 10px; font-weight: bold;">Escala 11h15min Semanal</p>
             `;
             document.getElementById("pdfHeader18h").innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
@@ -640,7 +697,18 @@
                 <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
                 <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
                 <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
-                <p style="margin-top: 10px; font-weight: bold;">Escala 18h-19h</p>
+                <p style="margin-top: 10px; font-weight: bold;">Escala 18h Domingo</p>
+            `;
+            document.getElementById("pdfHeader19h").innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                </div>
+                <h2>⛪ ESCALA DE LEITORES - ${mesNome.toUpperCase()} 2026</h2>
+                <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                <p style="margin-top: 10px; font-weight: bold;">Escala 19h Segunda a Sábado</p>
             `;
         }
 
@@ -697,24 +765,57 @@
         function renderTabela18h() {
             const tbody = document.getElementById("tbody-18h");
             tbody.innerHTML = "";
+            const linhasAtuais = diasPorMes[mesAtual];
+            const { missa18h } = separarMissasPorHorario(linhasAtuais);
             
-            linhas18h.forEach((linha, idx) => {
+            missa18h.forEach((linha, idx) => {
                 const tr = document.createElement("tr");
-                const [dia, diaSemana, horario] = linha;
+                const [dia, diaSemana] = linha;
                 
                 tr.innerHTML = `
                     <td class="cell-dia">${dia}</td>
                     <td class="cell-dia-semana">${diaSemana}</td>
-                    <td class="cell-horario">${horario}</td>
                 `;
                 
                 cargos.forEach(cargo => {
-                    const celId = `18h-${idx}-${cargo}`;
+                    const celId = `${mesAtual}-18h-${idx}-${cargo}`;
                     const td = document.createElement("td");
                     const select = criarSelect(celId);
                     
                     if (dados18h[celId]) {
                         select.value = dados18h[celId];
+                    }
+                    
+                    td.appendChild(select);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderTabela19h() {
+            const tbody = document.getElementById("tbody-19h");
+            tbody.innerHTML = "";
+            const linhasAtuais = diasPorMes[mesAtual];
+            const { missa19h } = separarMissasPorHorario(linhasAtuais);
+            
+            missa19h.forEach((linha, idx) => {
+                const tr = document.createElement("tr");
+                const [dia, diaSemana] = linha;
+                
+                tr.innerHTML = `
+                    <td class="cell-dia">${dia}</td>
+                    <td class="cell-dia-semana">${diaSemana}</td>
+                `;
+                
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-19h-${idx}-${cargo}`;
+                    const td = document.createElement("td");
+                    const select = criarSelect(celId);
+                    
+                    if (dados19h[celId]) {
+                        select.value = dados19h[celId];
                     }
                     
                     td.appendChild(select);
@@ -829,7 +930,11 @@
         }
 
         function downloadPDF(aba) {
-            const tabId = aba === "11h15min" ? "table-11h" : "table-18h";
+            let tabId;
+            if (aba === "11h15min") tabId = "table-11h";
+            else if (aba === "18h-domingo") tabId = "table-18h";
+            else if (aba === "19h-segsab") tabId = "table-19h";
+            
             const element = document.getElementById(tabId).parentElement;
             const opt = {
                 margin: 10,
@@ -844,6 +949,7 @@
         function downloadExcel(aba) {
             let csv = "";
             const linhasAtuais = diasPorMes[mesAtual];
+            const { missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
             
             if (aba === "11h15min") {
                 csv = "DIA,DIA_SEMANA,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
@@ -854,12 +960,21 @@
                     });
                     csv += valores.map(v => `"${v}"`).join(",") + "\n";
                 });
-            } else {
-                csv = "DIA,DIA_SEMANA,HORÁRIO,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
-                linhasAtuais.forEach((linha, idx) => {
-                    const valores = [...linha];
+            } else if (aba === "18h-domingo") {
+                csv = "DIA,DIA_SEMANA,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
+                missa18h.forEach((linha, idx) => {
+                    const valores = [linha[0], linha[1]];
                     cargos.forEach(cargo => {
-                        valores.push(dados18h[`${mesAtual}-${idx}-${cargo}`] || "");
+                        valores.push(dados18h[`${mesAtual}-18h-${idx}-${cargo}`] || "");
+                    });
+                    csv += valores.map(v => `"${v}"`).join(",") + "\n";
+                });
+            } else if (aba === "19h-segsab") {
+                csv = "DIA,DIA_SEMANA,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
+                missa19h.forEach((linha, idx) => {
+                    const valores = [linha[0], linha[1]];
+                    cargos.forEach(cargo => {
+                        valores.push(dados19h[`${mesAtual}-19h-${idx}-${cargo}`] || "");
                     });
                     csv += valores.map(v => `"${v}"`).join(",") + "\n";
                 });
@@ -874,8 +989,10 @@
         function atualizarMes() {
             mesAtual = parseInt(document.getElementById("mesSelecionado").value);
             document.getElementById("mesAtual").textContent = `${nomesMeses[mesAtual]} 2026`;
+            atualizarHeaderPDF();
             renderTabela11h();
             renderTabela18h();
+            renderTabela19h();
             carregarDados();
         }
 
@@ -914,19 +1031,19 @@
             const tbody = document.getElementById("tbody-18h");
             tbody.innerHTML = "";
             const linhasAtuais = diasPorMes[mesAtual];
+            const { missa18h } = separarMissasPorHorario(linhasAtuais);
             
-            linhasAtuais.forEach((linha, idx) => {
+            missa18h.forEach((linha, idx) => {
                 const tr = document.createElement("tr");
-                const [dia, diaSemana, horario] = linha;
+                const [dia, diaSemana] = linha;
                 
                 tr.innerHTML = `
                     <td class="cell-dia">${dia}</td>
                     <td class="cell-dia-semana">${diaSemana}</td>
-                    <td class="cell-horario">${horario}</td>
                 `;
                 
                 cargos.forEach(cargo => {
-                    const celId = `${mesAtual}-${idx}-${cargo}`;
+                    const celId = `${mesAtual}-18h-${idx}-${cargo}`;
                     const td = document.createElement("td");
                     const select = criarSelect(celId);
                     
@@ -944,6 +1061,9 @@
 
         function salvarDados() {
             const linhasAtuais = diasPorMes[mesAtual];
+            const { missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
+            
+            // Salvar dados 11h
             linhasAtuais.forEach((_, idx) => {
                 cargos.forEach(cargo => {
                     const celId = `${mesAtual}-${idx}-${cargo}`;
@@ -951,14 +1071,33 @@
                     if (select && select.closest("#tbody-11h")) {
                         dados11h[celId] = select.value;
                     }
+                });
+            });
+            
+            // Salvar dados 18h
+            missa18h.forEach((_, idx) => {
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-18h-${idx}-${cargo}`;
+                    const select = document.getElementById(celId);
                     if (select && select.closest("#tbody-18h")) {
                         dados18h[celId] = select.value;
                     }
                 });
             });
             
+            // Salvar dados 19h
+            missa19h.forEach((_, idx) => {
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-19h-${idx}-${cargo}`;
+                    const select = document.getElementById(celId);
+                    if (select && select.closest("#tbody-19h")) {
+                        dados19h[celId] = select.value;
+                    }
+                });
+            });
+            
             localStorage.setItem("escalaLeitores", JSON.stringify({
-                nomes, dados11h, dados18h, mesAtual
+                nomes, dados11h, dados18h, dados19h, mesAtual
             }));
             
             mostrarMensagem();
@@ -971,6 +1110,7 @@
                 nomes = obj.nomes || nomesPadroes;
                 dados11h = obj.dados11h || {};
                 dados18h = obj.dados18h || {};
+                dados19h = obj.dados19h || {};
                 if (obj.mesAtual) {
                     mesAtual = obj.mesAtual;
                     document.getElementById("mesSelecionado").value = mesAtual;
@@ -980,8 +1120,10 @@
         }
 
         carregarDados();
+        atualizarHeaderPDF();
         renderTabela11h();
         renderTabela18h();
+        renderTabela19h();
         renderNomes();
     </script>
 </body>

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala Leitores - Janeiro 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #2180A0;
+            --color-primary-hover: #1C6E88;
+            --color-background: #F5F5F5;
+            --color-surface: #FFFFFF;
+            --color-text: #1F2121;
+            --color-border: #D0D0D0;
+            --color-success: #208C8D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--color-surface);
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--color-primary);
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--color-border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--color-surface);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        thead {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        tr:hover {
+            background-color: #F9F9F9;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(33, 128, 160, 0.1);
+        }
+
+        select option {
+            padding: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-background);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .success-message {
+            display: none;
+            background-color: #E8F5E9;
+            color: var(--color-success);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--color-success);
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cell-dia {
+            font-weight: 600;
+            color: var(--color-primary);
+            min-width: 50px;
+        }
+
+        .cell-dia-semana {
+            min-width: 90px;
+            font-size: 13px;
+        }
+
+        .cell-horario {
+            min-width: 70px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .export-info {
+            background-color: #FFF3E0;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 13px;
+            border-left: 4px solid #FF9800;
+        }
+
+        .pdf-header {
+            display: none;
+        }
+
+        @media print {
+            .controls, .export-info, .tabs, .tab-btn, .header {
+                display: none !important;
+            }
+            .pdf-header {
+                display: block;
+                text-align: center;
+                margin-bottom: 20px;
+                border-bottom: 2px solid var(--color-primary);
+                padding-bottom: 15px;
+            }
+            .pdf-header h2 {
+                color: var(--color-primary);
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+            .pdf-header p {
+                font-size: 12px;
+                color: #666;
+                margin: 2px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            select {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+
+            .tabs {
+                gap: 4px;
+            }
+
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛪ Escala Leitores</h1>
+            <p>CATEDRAL DO DIVINO ESPÍRITO SANTO - Equipe de Leitores</p>
+            
+            <div style="margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight: 600; color: var(--color-text);">Selecione o Mês:</label>
+                <select id="mesSelecionado" onchange="atualizarMes()" style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 4px; font-size: 14px; width: 200px;">
+                    <option value="1">Janeiro 2026</option>
+                    <option value="2">Fevereiro 2026</option>
+                    <option value="3">Março 2026</option>
+                    <option value="4">Abril 2026</option>
+                    <option value="5">Maio 2026</option>
+                    <option value="6">Junho 2026</option>
+                    <option value="7">Julho 2026</option>
+                    <option value="8">Agosto 2026</option>
+                    <option value="9">Setembro 2026</option>
+                    <option value="10">Outubro 2026</option>
+                    <option value="11">Novembro 2026</option>
+                    <option value="12">Dezembro 2026</option>
+                </select>
+                <span id="mesAtual" style="font-weight: 600; color: var(--color-primary);">Janeiro 2026</span>
+            </div>
+        </div>
+
+        <div class="success-message" id="successMsg">✓ Escala salva com sucesso!</div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-11h')">11h15min</button>
+            <button class="tab-btn" onclick="switchTab('tab-18h')">18h-19h</button>
+            <button class="tab-btn" onclick="switchTab('tab-nomes')">📋 Nomes</button>
+        </div>
+
+        <!-- ABA 11h15min -->
+        <div id="tab-11h" class="tab-content active">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="downloadPDF('11h15min')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadExcel('11h15min')">📥 Baixar Excel</button>
+                <button class="btn btn-secondary" onclick="clearTab('tab-11h')">🔄 Limpar Tudo</button>
+            </div>
+            <div class="table-container">
+                <div class="pdf-header" id="pdfHeader11h">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                    </div>
+                    <h2>⛪ ESCALA DE LEITORES - JANEIRO 2026</h2>
+                    <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                    <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                    <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                    <p style="margin-top: 10px; font-weight: bold;">Escala 11h15min</p>
+                </div>
+                <table id="table-11h">
+                    <thead>
+                        <tr>
+                            <th>DIA</th>
+                            <th>DIA SEMANA</th>
+                            <th>1ª LEITURA</th>
+                            <th>SALMO</th>
+                            <th>2ª LEITURA</th>
+                            <th>PRECES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-11h"></tbody>
+                </table>
+            </div>
+            <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+        </div>
+
+        <!-- ABA 18h-19h -->
+        <div id="tab-18h" class="tab-content">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="downloadPDF('18h-19h')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadExcel('18h-19h')">📥 Baixar Excel</button>
+                <button class="btn btn-secondary" onclick="clearTab('tab-18h')">🔄 Limpar Tudo</button>
+            </div>
+            <div class="table-container">
+                <div class="pdf-header" id="pdfHeader18h">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                    </div>
+                    <h2>⛪ ESCALA DE LEITORES - JANEIRO 2026</h2>
+                    <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                    <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                    <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                    <p style="margin-top: 10px; font-weight: bold;">Escala 18h-19h</p>
+                </div>
+                <table id="table-18h">
+                    <thead>
+                        <tr>
+                            <th>DIA</th>
+                            <th>DIA SEMANA</th>
+                            <th>HORÁRIO</th>
+                            <th>1ª LEITURA</th>
+                            <th>SALMO</th>
+                            <th>2ª LEITURA</th>
+                            <th>PRECES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-18h"></tbody>
+                </table>
+            </div>
+            <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+        </div>
+
+        <!-- ABA NOMES -->
+        <div id="tab-nomes" class="tab-content">
+            <h2 style="margin-bottom: 16px; color: var(--color-primary);">Nomes Disponíveis</h2>
+            <p style="margin-bottom: 16px; font-size: 14px; color: #666;">Lista de todos os leitores cadastrados. Você pode editar e adicionar novos nomes aqui.</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NOME</th>
+                            <th style="width: 100px; text-align: center;">AÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-nomes"></tbody>
+                </table>
+            </div>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--color-border);">
+                <input type="text" id="novoNome" placeholder="Adicionar novo nome..." style="padding: 10px; border: 1px solid var(--color-border); border-radius: 4px; width: 100%; max-width: 300px; font-size: 14px;">
+                <button class="btn btn-primary" onclick="adicionarNome()" style="margin-top: 10px;">➕ Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const nomesPadroes = [
+            "ADRIAN", "ADRIANA", "AGDA", "ANDERSON", "ANGELA MARIA", "ANGEL",
+            "CARLOS M", "CARLA S.", "CLENIA", "CLEOFAS", "DANI", "DAVI",
+            "DAYANE", "DENISE", "DONIZETE", "DULCENEIA", "ELIANE", "FABIANA",
+            "GERALDO", "GUSTAVO", "IRIS", "JOANA", "JOSE EUSTAQUIO", "JULIANA",
+            "KENIA", "KEYLLIANE", "LEONARDO", "MARIA", "MARIA ANGEL", "MARIA CAMPOS",
+            "MARIA CELIA", "MARIA IRIS", "MARTHA", "MISLENE", "MIRIAN", "PAULO",
+            "POLYANE", "ROBSON", "ROMELIA", "SUELI", "TANIA", "TERESINHA",
+            "THIAGO", "TITA", "VALERIA", "VANDA", "VINICIOS", "VITORIA"
+        ];
+
+        // Dados de todos os meses de 2026 - com todas as missas (seg-sex 19h, sábados 19h, domingos 07h e 18h)
+        const diasPorMes = {
+            1: [
+                ["01", "QUINTA", "19:00"], ["02", "SEXTA", "19:00"], ["03", "SÁBADO", "19:00"],
+                ["04", "DOMINGO", "07:00"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
+                ["06", "TERÇA", "19:00"], ["07", "QUARTA", "19:00"], ["08", "QUINTA", "19:00"],
+                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "07:00"],
+                ["11", "DOMINGO", "18:00"], ["12", "SEGUNDA", "19:00"], ["13", "TERÇA", "19:00"],
+                ["14", "QUARTA", "19:00"], ["15", "QUINTA", "19:00"], ["16", "SEXTA", "19:00"],
+                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "07:00"], ["18", "DOMINGO", "18:00"],
+                ["19", "SEGUNDA", "19:00"], ["20", "TERÇA", "19:00"], ["21", "QUARTA", "19:00"],
+                ["22", "QUINTA", "19:00"], ["23", "SEXTA", "19:00"], ["24", "SÁBADO", "19:00"],
+                ["25", "DOMINGO", "07:00"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
+                ["27", "TERÇA", "19:00"], ["28", "QUARTA", "19:00"], ["29", "QUINTA", "19:00"],
+                ["30", "SEXTA", "19:00"], ["31", "SÁBADO", "19:00"]
+            ],
+            2: [
+                ["01", "QUINTA", "19:00"], ["02", "SEGUNDA", "19:00"], ["03", "TERÇA", "19:00"],
+                ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"], ["06", "SEXTA", "19:00"],
+                ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"], ["08", "DOMINGO", "18:00"],
+                ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"], ["11", "QUARTA", "19:00"],
+                ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"], ["14", "SÁBADO", "19:00"],
+                ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"], ["16", "SEGUNDA", "19:00"],
+                ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"], ["19", "QUINTA", "19:00"],
+                ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"], ["22", "DOMINGO", "07:00"],
+                ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"], ["24", "TERÇA", "19:00"],
+                ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"], ["27", "SEXTA", "19:00"],
+                ["28", "SÁBADO", "19:00"]
+            ],
+            3: [
+                ["01", "DOMINGO", "07:00"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
+                ["03", "TERÇA", "19:00"], ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"],
+                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"],
+                ["08", "DOMINGO", "18:00"], ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"],
+                ["11", "QUARTA", "19:00"], ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"],
+                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"],
+                ["16", "SEGUNDA", "19:00"], ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"],
+                ["19", "QUINTA", "19:00"], ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"],
+                ["22", "DOMINGO", "07:00"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
+                ["24", "TERÇA", "19:00"], ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"],
+                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "07:00"],
+                ["29", "DOMINGO", "18:00"], ["30", "SEGUNDA", "19:00"], ["31", "TERÇA", "19:00"]
+            ],
+            4: [
+                ["01", "QUARTA", "19:00"], ["02", "QUINTA", "19:00"], ["03", "SEXTA", "19:00"],
+                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "07:00"], ["05", "DOMINGO", "18:00"],
+                ["06", "SEGUNDA", "19:00"], ["07", "TERÇA", "19:00"], ["08", "QUARTA", "19:00"],
+                ["09", "QUINTA", "19:00"], ["10", "SEXTA", "19:00"], ["11", "SÁBADO", "19:00"],
+                ["12", "DOMINGO", "07:00"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
+                ["14", "TERÇA", "19:00"], ["15", "QUARTA", "19:00"], ["16", "QUINTA", "19:00"],
+                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "07:00"],
+                ["19", "DOMINGO", "18:00"], ["20", "SEGUNDA", "19:00"], ["21", "TERÇA", "19:00"],
+                ["22", "QUARTA", "19:00"], ["23", "QUINTA", "19:00"], ["24", "SEXTA", "19:00"],
+                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "07:00"], ["26", "DOMINGO", "18:00"],
+                ["27", "SEGUNDA", "19:00"], ["28", "TERÇA", "19:00"], ["29", "QUARTA", "19:00"],
+                ["30", "QUINTA", "19:00"]
+            ],
+            5: [
+                ["01", "SEXTA", "19:00"], ["02", "SÁBADO", "19:00"], ["03", "DOMINGO", "07:00"],
+                ["03", "DOMINGO", "18:00"], ["04", "SEGUNDA", "19:00"], ["05", "TERÇA", "19:00"],
+                ["06", "QUARTA", "19:00"], ["07", "QUINTA", "19:00"], ["08", "SEXTA", "19:00"],
+                ["09", "SÁBADO", "19:00"], ["10", "DOMINGO", "07:00"], ["10", "DOMINGO", "18:00"],
+                ["11", "SEGUNDA", "19:00"], ["12", "TERÇA", "19:00"], ["13", "QUARTA", "19:00"],
+                ["14", "QUINTA", "19:00"], ["15", "SEXTA", "19:00"], ["16", "SÁBADO", "19:00"],
+                ["17", "DOMINGO", "07:00"], ["17", "DOMINGO", "18:00"], ["18", "SEGUNDA", "19:00"],
+                ["19", "TERÇA", "19:00"], ["20", "QUARTA", "19:00"], ["21", "QUINTA", "19:00"],
+                ["22", "SEXTA", "19:00"], ["23", "SÁBADO", "19:00"], ["24", "DOMINGO", "07:00"],
+                ["24", "DOMINGO", "18:00"], ["25", "SEGUNDA", "19:00"], ["26", "TERÇA", "19:00"],
+                ["27", "QUARTA", "19:00"], ["28", "QUINTA", "19:00"], ["29", "SEXTA", "19:00"],
+                ["30", "SÁBADO", "19:00"], ["31", "DOMINGO", "07:00"], ["31", "DOMINGO", "18:00"]
+            ],
+            6: [
+                ["01", "SEGUNDA", "19:00"], ["02", "TERÇA", "19:00"], ["03", "QUARTA", "19:00"],
+                ["04", "QUINTA", "19:00"], ["05", "SEXTA", "19:00"], ["06", "SÁBADO", "19:00"],
+                ["07", "DOMINGO", "07:00"], ["07", "DOMINGO", "18:00"], ["08", "SEGUNDA", "19:00"],
+                ["09", "TERÇA", "19:00"], ["10", "QUARTA", "19:00"], ["11", "QUINTA", "19:00"],
+                ["12", "SEXTA", "19:00"], ["13", "SÁBADO", "19:00"], ["14", "DOMINGO", "07:00"],
+                ["14", "DOMINGO", "18:00"], ["15", "SEGUNDA", "19:00"], ["16", "TERÇA", "19:00"],
+                ["17", "QUARTA", "19:00"], ["18", "QUINTA", "19:00"], ["19", "SEXTA", "19:00"],
+                ["20", "SÁBADO", "19:00"], ["21", "DOMINGO", "07:00"], ["21", "DOMINGO", "18:00"],
+                ["22", "SEGUNDA", "19:00"], ["23", "TERÇA", "19:00"], ["24", "QUARTA", "19:00"],
+                ["25", "QUINTA", "19:00"], ["26", "SEXTA", "19:00"], ["27", "SÁBADO", "19:00"],
+                ["28", "DOMINGO", "07:00"], ["28", "DOMINGO", "18:00"], ["29", "SEGUNDA", "19:00"],
+                ["30", "TERÇA", "19:00"]
+            ],
+            7: [
+                ["01", "QUARTA", "19:00"], ["02", "QUINTA", "19:00"], ["03", "SEXTA", "19:00"],
+                ["04", "SÁBADO", "19:00"], ["05", "DOMINGO", "07:00"], ["05", "DOMINGO", "18:00"],
+                ["06", "SEGUNDA", "19:00"], ["07", "TERÇA", "19:00"], ["08", "QUARTA", "19:00"],
+                ["09", "QUINTA", "19:00"], ["10", "SEXTA", "19:00"], ["11", "SÁBADO", "19:00"],
+                ["12", "DOMINGO", "07:00"], ["12", "DOMINGO", "18:00"], ["13", "SEGUNDA", "19:00"],
+                ["14", "TERÇA", "19:00"], ["15", "QUARTA", "19:00"], ["16", "QUINTA", "19:00"],
+                ["17", "SEXTA", "19:00"], ["18", "SÁBADO", "19:00"], ["19", "DOMINGO", "07:00"],
+                ["19", "DOMINGO", "18:00"], ["20", "SEGUNDA", "19:00"], ["21", "TERÇA", "19:00"],
+                ["22", "QUARTA", "19:00"], ["23", "QUINTA", "19:00"], ["24", "SEXTA", "19:00"],
+                ["25", "SÁBADO", "19:00"], ["26", "DOMINGO", "07:00"], ["26", "DOMINGO", "18:00"],
+                ["27", "SEGUNDA", "19:00"], ["28", "TERÇA", "19:00"], ["29", "QUARTA", "19:00"],
+                ["30", "QUINTA", "19:00"], ["31", "SEXTA", "19:00"]
+            ],
+            8: [
+                ["01", "SÁBADO", "19:00"], ["02", "DOMINGO", "07:00"], ["02", "DOMINGO", "18:00"],
+                ["03", "SEGUNDA", "19:00"], ["04", "TERÇA", "19:00"], ["05", "QUARTA", "19:00"],
+                ["06", "QUINTA", "19:00"], ["07", "SEXTA", "19:00"], ["08", "SÁBADO", "19:00"],
+                ["09", "DOMINGO", "07:00"], ["09", "DOMINGO", "18:00"], ["10", "SEGUNDA", "19:00"],
+                ["11", "TERÇA", "19:00"], ["12", "QUARTA", "19:00"], ["13", "QUINTA", "19:00"],
+                ["14", "SEXTA", "19:00"], ["15", "SÁBADO", "19:00"], ["16", "DOMINGO", "07:00"],
+                ["16", "DOMINGO", "18:00"], ["17", "SEGUNDA", "19:00"], ["18", "TERÇA", "19:00"],
+                ["19", "QUARTA", "19:00"], ["20", "QUINTA", "19:00"], ["21", "SEXTA", "19:00"],
+                ["22", "SÁBADO", "19:00"], ["23", "DOMINGO", "07:00"], ["23", "DOMINGO", "18:00"],
+                ["24", "SEGUNDA", "19:00"], ["25", "TERÇA", "19:00"], ["26", "QUARTA", "19:00"],
+                ["27", "QUINTA", "19:00"], ["28", "SEXTA", "19:00"], ["29", "SÁBADO", "19:00"],
+                ["30", "DOMINGO", "07:00"], ["30", "DOMINGO", "18:00"], ["31", "SEGUNDA", "19:00"]
+            ],
+            9: [
+                ["01", "TERÇA", "19:00"], ["02", "QUARTA", "19:00"], ["03", "QUINTA", "19:00"],
+                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "07:00"],
+                ["06", "DOMINGO", "18:00"], ["07", "SEGUNDA", "19:00"], ["08", "TERÇA", "19:00"],
+                ["09", "QUARTA", "19:00"], ["10", "QUINTA", "19:00"], ["11", "SEXTA", "19:00"],
+                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "07:00"], ["13", "DOMINGO", "18:00"],
+                ["14", "SEGUNDA", "19:00"], ["15", "TERÇA", "19:00"], ["16", "QUARTA", "19:00"],
+                ["17", "QUINTA", "19:00"], ["18", "SEXTA", "19:00"], ["19", "SÁBADO", "19:00"],
+                ["20", "DOMINGO", "07:00"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
+                ["22", "TERÇA", "19:00"], ["23", "QUARTA", "19:00"], ["24", "QUINTA", "19:00"],
+                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "07:00"],
+                ["27", "DOMINGO", "18:00"], ["28", "SEGUNDA", "19:00"], ["29", "TERÇA", "19:00"],
+                ["30", "QUARTA", "19:00"]
+            ],
+            10: [
+                ["01", "QUINTA", "19:00"], ["02", "SEXTA", "19:00"], ["03", "SÁBADO", "19:00"],
+                ["04", "DOMINGO", "07:00"], ["04", "DOMINGO", "18:00"], ["05", "SEGUNDA", "19:00"],
+                ["06", "TERÇA", "19:00"], ["07", "QUARTA", "19:00"], ["08", "QUINTA", "19:00"],
+                ["09", "SEXTA", "19:00"], ["10", "SÁBADO", "19:00"], ["11", "DOMINGO", "07:00"],
+                ["11", "DOMINGO", "18:00"], ["12", "SEGUNDA", "19:00"], ["13", "TERÇA", "19:00"],
+                ["14", "QUARTA", "19:00"], ["15", "QUINTA", "19:00"], ["16", "SEXTA", "19:00"],
+                ["17", "SÁBADO", "19:00"], ["18", "DOMINGO", "07:00"], ["18", "DOMINGO", "18:00"],
+                ["19", "SEGUNDA", "19:00"], ["20", "TERÇA", "19:00"], ["21", "QUARTA", "19:00"],
+                ["22", "QUINTA", "19:00"], ["23", "SEXTA", "19:00"], ["24", "SÁBADO", "19:00"],
+                ["25", "DOMINGO", "07:00"], ["25", "DOMINGO", "18:00"], ["26", "SEGUNDA", "19:00"],
+                ["27", "TERÇA", "19:00"], ["28", "QUARTA", "19:00"], ["29", "QUINTA", "19:00"],
+                ["30", "SEXTA", "19:00"], ["31", "SÁBADO", "19:00"]
+            ],
+            11: [
+                ["01", "DOMINGO", "07:00"], ["01", "DOMINGO", "18:00"], ["02", "SEGUNDA", "19:00"],
+                ["03", "TERÇA", "19:00"], ["04", "QUARTA", "19:00"], ["05", "QUINTA", "19:00"],
+                ["06", "SEXTA", "19:00"], ["07", "SÁBADO", "19:00"], ["08", "DOMINGO", "07:00"],
+                ["08", "DOMINGO", "18:00"], ["09", "SEGUNDA", "19:00"], ["10", "TERÇA", "19:00"],
+                ["11", "QUARTA", "19:00"], ["12", "QUINTA", "19:00"], ["13", "SEXTA", "19:00"],
+                ["14", "SÁBADO", "19:00"], ["15", "DOMINGO", "07:00"], ["15", "DOMINGO", "18:00"],
+                ["16", "SEGUNDA", "19:00"], ["17", "TERÇA", "19:00"], ["18", "QUARTA", "19:00"],
+                ["19", "QUINTA", "19:00"], ["20", "SEXTA", "19:00"], ["21", "SÁBADO", "19:00"],
+                ["22", "DOMINGO", "07:00"], ["22", "DOMINGO", "18:00"], ["23", "SEGUNDA", "19:00"],
+                ["24", "TERÇA", "19:00"], ["25", "QUARTA", "19:00"], ["26", "QUINTA", "19:00"],
+                ["27", "SEXTA", "19:00"], ["28", "SÁBADO", "19:00"], ["29", "DOMINGO", "07:00"],
+                ["29", "DOMINGO", "18:00"], ["30", "SEGUNDA", "19:00"]
+            ],
+            12: [
+                ["01", "TERÇA", "19:00"], ["02", "QUARTA", "19:00"], ["03", "QUINTA", "19:00"],
+                ["04", "SEXTA", "19:00"], ["05", "SÁBADO", "19:00"], ["06", "DOMINGO", "07:00"],
+                ["06", "DOMINGO", "18:00"], ["07", "SEGUNDA", "19:00"], ["08", "TERÇA", "19:00"],
+                ["09", "QUARTA", "19:00"], ["10", "QUINTA", "19:00"], ["11", "SEXTA", "19:00"],
+                ["12", "SÁBADO", "19:00"], ["13", "DOMINGO", "07:00"], ["13", "DOMINGO", "18:00"],
+                ["14", "SEGUNDA", "19:00"], ["15", "TERÇA", "19:00"], ["16", "QUARTA", "19:00"],
+                ["17", "QUINTA", "19:00"], ["18", "SEXTA", "19:00"], ["19", "SÁBADO", "19:00"],
+                ["20", "DOMINGO", "07:00"], ["20", "DOMINGO", "18:00"], ["21", "SEGUNDA", "19:00"],
+                ["22", "TERÇA", "19:00"], ["23", "QUARTA", "19:00"], ["24", "QUINTA", "19:00"],
+                ["25", "SEXTA", "19:00"], ["26", "SÁBADO", "19:00"], ["27", "DOMINGO", "07:00"],
+                ["27", "DOMINGO", "18:00"], ["28", "SEGUNDA", "19:00"], ["29", "TERÇA", "19:00"],
+                ["30", "QUARTA", "19:00"], ["31", "QUINTA", "19:00"]
+            ]
+        };
+
+        let nomes = [...nomesPadroes];
+        let dados11h = {};
+        let dados18h = {};
+        let mesAtual = 1;
+
+        const nomesMeses = [
+            "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        const cargos = ["1ª LEITURA", "SALMO", "2ª LEITURA", "PRECES"];
+
+        function atualizarHeaderPDF() {
+            const mesNome = nomesMeses[mesAtual];
+            document.getElementById("pdfHeader11h").innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                </div>
+                <h2>⛪ ESCALA DE LEITORES - ${mesNome.toUpperCase()} 2026</h2>
+                <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                <p style="margin-top: 10px; font-weight: bold;">Escala 11h15min</p>
+            `;
+            document.getElementById("pdfHeader18h").innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/a66cd576-1e4a-465a-8dc2-aecc822f6d95" alt="Logo Catedral" style="height: 80px; width: auto;">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/eac7dc2e-5ed4-4918-9e5c-86fac3bff197" alt="Equipe de Leitores" style="height: 80px; width: auto;">
+                </div>
+                <h2>⛪ ESCALA DE LEITORES - ${mesNome.toUpperCase()} 2026</h2>
+                <p>CATEDRAL DO DIVINO ESPÍRITO SANTO</p>
+                <p>Pastoral Litúrgica | Fundada em 25 de junho de 2013</p>
+                <p>Equipe de Leitores | Fundada em 20 de fevereiro de 1972</p>
+                <p style="margin-top: 10px; font-weight: bold;">Escala 18h-19h</p>
+            `;
+        }
+
+        function criarSelect(id) {
+            const select = document.createElement("select");
+            select.id = id;
+            select.onchange = () => salvarDados();
+            
+            const optVazio = document.createElement("option");
+            optVazio.value = "";
+            optVazio.textContent = "— Selecionar —";
+            select.appendChild(optVazio);
+            
+            nomes.forEach(nome => {
+                const opt = document.createElement("option");
+                opt.value = nome;
+                opt.textContent = nome;
+                select.appendChild(opt);
+            });
+            
+            return select;
+        }
+
+        function renderTabela11h() {
+            const tbody = document.getElementById("tbody-11h");
+            tbody.innerHTML = "";
+            
+            linhas11h.forEach((linha, idx) => {
+                const tr = document.createElement("tr");
+                const [dia, diaSemana] = linha;
+                
+                tr.innerHTML = `
+                    <td class="cell-dia">${dia}</td>
+                    <td class="cell-dia-semana">${diaSemana}</td>
+                `;
+                
+                cargos.forEach(cargo => {
+                    const celId = `11h-${idx}-${cargo}`;
+                    const td = document.createElement("td");
+                    const select = criarSelect(celId);
+                    
+                    if (dados11h[celId]) {
+                        select.value = dados11h[celId];
+                    }
+                    
+                    td.appendChild(select);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderTabela18h() {
+            const tbody = document.getElementById("tbody-18h");
+            tbody.innerHTML = "";
+            
+            linhas18h.forEach((linha, idx) => {
+                const tr = document.createElement("tr");
+                const [dia, diaSemana, horario] = linha;
+                
+                tr.innerHTML = `
+                    <td class="cell-dia">${dia}</td>
+                    <td class="cell-dia-semana">${diaSemana}</td>
+                    <td class="cell-horario">${horario}</td>
+                `;
+                
+                cargos.forEach(cargo => {
+                    const celId = `18h-${idx}-${cargo}`;
+                    const td = document.createElement("td");
+                    const select = criarSelect(celId);
+                    
+                    if (dados18h[celId]) {
+                        select.value = dados18h[celId];
+                    }
+                    
+                    td.appendChild(select);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderNomes() {
+            const tbody = document.getElementById("tbody-nomes");
+            tbody.innerHTML = "";
+            
+            nomes.forEach((nome, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${nome}</td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-secondary" onclick="removerNome(${idx})" style="padding: 6px 12px; font-size: 12px;">Remover</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+            
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+        }
+
+        function salvarDados() {
+            linhas11h.forEach((_, idx) => {
+                cargos.forEach(cargo => {
+                    const celId = `11h-${idx}-${cargo}`;
+                    const select = document.getElementById(celId);
+                    if (select) dados11h[celId] = select.value;
+                });
+            });
+            
+            linhas18h.forEach((_, idx) => {
+                cargos.forEach(cargo => {
+                    const celId = `18h-${idx}-${cargo}`;
+                    const select = document.getElementById(celId);
+                    if (select) dados18h[celId] = select.value;
+                });
+            });
+            
+            localStorage.setItem("escalaLeitores", JSON.stringify({
+                nomes, dados11h, dados18h
+            }));
+            
+            mostrarMensagem();
+        }
+
+        function carregarDados() {
+            const saved = localStorage.getItem("escalaLeitores");
+            if (saved) {
+                const obj = JSON.parse(saved);
+                nomes = obj.nomes || nomesPadroes;
+                dados11h = obj.dados11h || {};
+                dados18h = obj.dados18h || {};
+            }
+        }
+
+        function mostrarMensagem() {
+            const msg = document.getElementById("successMsg");
+            msg.classList.add("show");
+            setTimeout(() => msg.classList.remove("show"), 3000);
+        }
+
+        function adicionarNome() {
+            const input = document.getElementById("novoNome");
+            const nome = input.value.trim().toUpperCase();
+            
+            if (nome && !nomes.includes(nome)) {
+                nomes.push(nome);
+                nomes.sort();
+                input.value = "";
+                salvarDados();
+                renderNomes();
+                renderTabela11h();
+                renderTabela18h();
+                mostrarMensagem();
+            }
+        }
+
+        function removerNome(idx) {
+            if (confirm(`Remover "${nomes[idx]}"?`)) {
+                nomes.splice(idx, 1);
+                salvarDados();
+                renderNomes();
+                renderTabela11h();
+                renderTabela18h();
+            }
+        }
+
+        function clearTab(tabId) {
+            if (confirm("Tem certeza que deseja limpar todos os dados desta aba?")) {
+                if (tabId === "tab-11h") {
+                    dados11h = {};
+                    renderTabela11h();
+                } else {
+                    dados18h = {};
+                    renderTabela18h();
+                }
+                salvarDados();
+            }
+        }
+
+        function downloadPDF(aba) {
+            const tabId = aba === "11h15min" ? "table-11h" : "table-18h";
+            const element = document.getElementById(tabId).parentElement;
+            const opt = {
+                margin: 10,
+                filename: `Escala_${aba}_${nomesMeses[mesAtual]}2026.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function downloadExcel(aba) {
+            let csv = "";
+            const linhasAtuais = diasPorMes[mesAtual];
+            
+            if (aba === "11h15min") {
+                csv = "DIA,DIA_SEMANA,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
+                linhasAtuais.forEach((linha, idx) => {
+                    const valores = [linha[0], linha[1]];
+                    cargos.forEach(cargo => {
+                        valores.push(dados11h[`${mesAtual}-${idx}-${cargo}`] || "");
+                    });
+                    csv += valores.map(v => `"${v}"`).join(",") + "\n";
+                });
+            } else {
+                csv = "DIA,DIA_SEMANA,HORÁRIO,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
+                linhasAtuais.forEach((linha, idx) => {
+                    const valores = [...linha];
+                    cargos.forEach(cargo => {
+                        valores.push(dados18h[`${mesAtual}-${idx}-${cargo}`] || "");
+                    });
+                    csv += valores.map(v => `"${v}"`).join(",") + "\n";
+                });
+            }
+            
+            const link = document.createElement("a");
+            link.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURIComponent(csv);
+            link.download = `Escala_${aba}_${nomesMeses[mesAtual]}2026.csv`;
+            link.click();
+        }
+
+        function atualizarMes() {
+            mesAtual = parseInt(document.getElementById("mesSelecionado").value);
+            document.getElementById("mesAtual").textContent = `${nomesMeses[mesAtual]} 2026`;
+            renderTabela11h();
+            renderTabela18h();
+            carregarDados();
+        }
+
+        function renderTabela11h() {
+            const tbody = document.getElementById("tbody-11h");
+            tbody.innerHTML = "";
+            const linhasAtuais = diasPorMes[mesAtual];
+            
+            linhasAtuais.forEach((linha, idx) => {
+                const tr = document.createElement("tr");
+                const [dia, diaSemana] = linha;
+                
+                tr.innerHTML = `
+                    <td class="cell-dia">${dia}</td>
+                    <td class="cell-dia-semana">${diaSemana}</td>
+                `;
+                
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-${idx}-${cargo}`;
+                    const td = document.createElement("td");
+                    const select = criarSelect(celId);
+                    
+                    if (dados11h[celId]) {
+                        select.value = dados11h[celId];
+                    }
+                    
+                    td.appendChild(select);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderTabela18h() {
+            const tbody = document.getElementById("tbody-18h");
+            tbody.innerHTML = "";
+            const linhasAtuais = diasPorMes[mesAtual];
+            
+            linhasAtuais.forEach((linha, idx) => {
+                const tr = document.createElement("tr");
+                const [dia, diaSemana, horario] = linha;
+                
+                tr.innerHTML = `
+                    <td class="cell-dia">${dia}</td>
+                    <td class="cell-dia-semana">${diaSemana}</td>
+                    <td class="cell-horario">${horario}</td>
+                `;
+                
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-${idx}-${cargo}`;
+                    const td = document.createElement("td");
+                    const select = criarSelect(celId);
+                    
+                    if (dados18h[celId]) {
+                        select.value = dados18h[celId];
+                    }
+                    
+                    td.appendChild(select);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function salvarDados() {
+            const linhasAtuais = diasPorMes[mesAtual];
+            linhasAtuais.forEach((_, idx) => {
+                cargos.forEach(cargo => {
+                    const celId = `${mesAtual}-${idx}-${cargo}`;
+                    const select = document.getElementById(celId);
+                    if (select && select.closest("#tbody-11h")) {
+                        dados11h[celId] = select.value;
+                    }
+                    if (select && select.closest("#tbody-18h")) {
+                        dados18h[celId] = select.value;
+                    }
+                });
+            });
+            
+            localStorage.setItem("escalaLeitores", JSON.stringify({
+                nomes, dados11h, dados18h, mesAtual
+            }));
+            
+            mostrarMensagem();
+        }
+
+        function carregarDados() {
+            const saved = localStorage.getItem("escalaLeitores");
+            if (saved) {
+                const obj = JSON.parse(saved);
+                nomes = obj.nomes || nomesPadroes;
+                dados11h = obj.dados11h || {};
+                dados18h = obj.dados18h || {};
+                if (obj.mesAtual) {
+                    mesAtual = obj.mesAtual;
+                    document.getElementById("mesSelecionado").value = mesAtual;
+                    document.getElementById("mesAtual").textContent = `${nomesMeses[mesAtual]} 2026`;
+                }
+            }
+        }
+
+        carregarDados();
+        renderTabela11h();
+        renderTabela18h();
+        renderNomes();
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escala Leitores - Janeiro 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --color-primary: #2180A0;
@@ -245,8 +246,18 @@
             display: none;
         }
 
+        .format-info {
+            background-color: #E8F4F8;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 16px;
+            font-size: 12px;
+            border-left: 4px solid var(--color-primary);
+            color: #0d47a1;
+        }
+
         @media print {
-            .controls, .export-info, .tabs, .tab-btn, .header {
+            .controls, .export-info, .format-info, .tabs, .tab-btn, .header {
                 display: none !important;
             }
             .pdf-header {
@@ -386,6 +397,8 @@
         <div id="tab-11h" class="tab-content active">
             <div class="controls">
                 <button class="btn btn-primary" onclick="downloadPDF('11h15min')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('11h15min', 'jpg')">🖼️ JPG (Comprimido)</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('11h15min', 'png')">🖼️ PNG (Alta Qualidade)</button>
                 <button class="btn btn-primary" onclick="downloadExcel('11h15min')">📥 Baixar Excel</button>
                 <button class="btn btn-secondary" onclick="clearTab('tab-11h')">🔄 Limpar Tudo</button>
             </div>
@@ -416,12 +429,17 @@
                 </table>
             </div>
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+            <div class="format-info">
+                📋 <strong>JPG vs PNG:</strong> Use JPG para compartilhar em redes sociais (arquivo menor). Use PNG para documentos e impressão (melhor qualidade).
+            </div>
         </div>
 
         <!-- ABA 18h Domingo -->
         <div id="tab-18h" class="tab-content">
             <div class="controls">
                 <button class="btn btn-primary" onclick="downloadPDF('18h-domingo')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('18h-domingo', 'jpg')">🖼️ JPG (Comprimido)</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('18h-domingo', 'png')">🖼️ PNG (Alta Qualidade)</button>
                 <button class="btn btn-primary" onclick="downloadExcel('18h-domingo')">📥 Baixar Excel</button>
                 <button class="btn btn-secondary" onclick="clearTab('tab-18h')">🔄 Limpar Tudo</button>
             </div>
@@ -452,12 +470,17 @@
                 </table>
             </div>
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+            <div class="format-info">
+                📋 <strong>JPG vs PNG:</strong> Use JPG para compartilhar em redes sociais (arquivo menor). Use PNG para documentos e impressão (melhor qualidade).
+            </div>
         </div>
 
         <!-- ABA 19h Segunda a Sábado -->
         <div id="tab-19h" class="tab-content">
             <div class="controls">
                 <button class="btn btn-primary" onclick="downloadPDF('19h-segsab')">📄 Baixar PDF</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('19h-segsab', 'jpg')">🖼️ JPG (Comprimido)</button>
+                <button class="btn btn-primary" onclick="downloadImagemEscala('19h-segsab', 'png')">🖼️ PNG (Alta Qualidade)</button>
                 <button class="btn btn-primary" onclick="downloadExcel('19h-segsab')">📥 Baixar Excel</button>
                 <button class="btn btn-secondary" onclick="clearTab('tab-19h')">🔄 Limpar Tudo</button>
             </div>
@@ -488,6 +511,9 @@
                 </table>
             </div>
             <div class="export-info">💡 Dica: Toque nos campos para selecionar os nomes. Use os botões para exportar.</div>
+            <div class="format-info">
+                📋 <strong>JPG vs PNG:</strong> Use JPG para compartilhar em redes sociais (arquivo menor). Use PNG para documentos e impressão (melhor qualidade).
+            </div>
         </div>
 
         <!-- ABA MEU CRONOGRAMA -->
@@ -577,10 +603,6 @@
             "THIAGO", "TITA", "VALERIA", "VANDA", "VINICIOS", "VITORIA"
         ];
 
-        // Dados de todos os meses de 2026
-        // 11:15 = SEGUNDA a SEXTA apenas
-        // 18:00 = DOMINGOS apenas
-        // 19:00 = SEGUNDA a SÁBADO apenas
         const diasPorMes = {
             1: [
                 ["01", "QUINTA", "19:00"], ["02", "SEXTA", "19:00"], ["03", "SÁBADO", "19:00"],
@@ -833,7 +855,6 @@
 
         const cargos = ["1ª LEITURA", "SALMO", "2ª LEITURA", "PRECES"];
 
-        // Separar missas por horário
         function separarMissasPorHorario(linhas) {
             const missa11h = [];
             const missa18h = [];
@@ -1030,40 +1051,6 @@
             event.target.classList.add("active");
         }
 
-        function salvarDados() {
-            linhas11h.forEach((_, idx) => {
-                cargos.forEach(cargo => {
-                    const celId = `11h-${idx}-${cargo}`;
-                    const select = document.getElementById(celId);
-                    if (select) dados11h[celId] = select.value;
-                });
-            });
-            
-            linhas18h.forEach((_, idx) => {
-                cargos.forEach(cargo => {
-                    const celId = `18h-${idx}-${cargo}`;
-                    const select = document.getElementById(celId);
-                    if (select) dados18h[celId] = select.value;
-                });
-            });
-            
-            localStorage.setItem("escalaLeitores", JSON.stringify({
-                nomes, dados11h, dados18h
-            }));
-            
-            mostrarMensagem();
-        }
-
-        function carregarDados() {
-            const saved = localStorage.getItem("escalaLeitores");
-            if (saved) {
-                const obj = JSON.parse(saved);
-                nomes = obj.nomes || nomesPadroes;
-                dados11h = obj.dados11h || {};
-                dados18h = obj.dados18h || {};
-            }
-        }
-
         function mostrarMensagem() {
             const msg = document.getElementById("successMsg");
             msg.classList.add("show");
@@ -1082,6 +1069,7 @@
                 renderNomes();
                 renderTabela11h();
                 renderTabela18h();
+                renderTabela19h();
                 mostrarMensagem();
             }
         }
@@ -1093,6 +1081,7 @@
                 renderNomes();
                 renderTabela11h();
                 renderTabela18h();
+                renderTabela19h();
             }
         }
 
@@ -1101,9 +1090,12 @@
                 if (tabId === "tab-11h") {
                     dados11h = {};
                     renderTabela11h();
-                } else {
+                } else if (tabId === "tab-18h") {
                     dados18h = {};
                     renderTabela18h();
+                } else if (tabId === "tab-19h") {
+                    dados19h = {};
+                    renderTabela19h();
                 }
                 salvarDados();
             }
@@ -1126,17 +1118,69 @@
             html2pdf().set(opt).from(element).save();
         }
 
+        function downloadImagemEscala(aba, formato) {
+            let tabId, headerId;
+            if (aba === "11h15min") {
+                tabId = "table-11h";
+                headerId = "pdfHeader11h";
+            } else if (aba === "18h-domingo") {
+                tabId = "table-18h";
+                headerId = "pdfHeader18h";
+            } else if (aba === "19h-segsab") {
+                tabId = "table-19h";
+                headerId = "pdfHeader19h";
+            }
+            
+            const header = document.getElementById(headerId);
+            const table = document.getElementById(tabId);
+            
+            const container = document.createElement("div");
+            container.style.width = "1200px";
+            container.style.backgroundColor = "white";
+            container.style.padding = "40px";
+            container.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+            
+            const headerClone = header.cloneNode(true);
+            const tableClone = table.cloneNode(true);
+            
+            headerClone.style.display = "block";
+            
+            container.appendChild(headerClone);
+            container.appendChild(tableClone);
+            document.body.appendChild(container);
+            
+            html2canvas(container, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: "#FFFFFF"
+            }).then(canvas => {
+                const link = document.createElement("a");
+                
+                if (formato === 'jpg') {
+                    link.href = canvas.toDataURL("image/jpeg", 0.90);
+                    link.download = `Escala_${aba}_${nomesMeses[mesAtual]}_2026.jpg`;
+                } else if (formato === 'png') {
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = `Escala_${aba}_${nomesMeses[mesAtual]}_2026.png`;
+                }
+                
+                link.click();
+                document.body.removeChild(container);
+            });
+        }
+
         function downloadExcel(aba) {
             let csv = "";
             const linhasAtuais = diasPorMes[mesAtual];
-            const { missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
+            const { missa11h, missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
             
             if (aba === "11h15min") {
                 csv = "DIA,DIA_SEMANA,1ª LEITURA,SALMO,2ª LEITURA,PRECES\n";
-                linhasAtuais.forEach((linha, idx) => {
+                missa11h.forEach((linha, idx) => {
                     const valores = [linha[0], linha[1]];
                     cargos.forEach(cargo => {
-                        valores.push(dados11h[`${mesAtual}-${idx}-${cargo}`] || "");
+                        valores.push(dados11h[`${mesAtual}-11h-${idx}-${cargo}`] || "");
                     });
                     csv += valores.map(v => `"${v}"`).join(",") + "\n";
                 });
@@ -1162,7 +1206,7 @@
             
             const link = document.createElement("a");
             link.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURIComponent(csv);
-            link.download = `Escala_${aba}_${nomesMeses[mesAtual]}2026.csv`;
+            link.download = `Escala_${aba}_${nomesMeses[mesAtual]}_2026.csv`;
             link.click();
         }
 
@@ -1176,43 +1220,10 @@
             renderTabela19h();
         }
 
-        function renderTabela18h() {
-            const tbody = document.getElementById("tbody-18h");
-            tbody.innerHTML = "";
-            const linhasAtuais = diasPorMes[mesAtual];
-            const { missa18h } = separarMissasPorHorario(linhasAtuais);
-            
-            missa18h.forEach((linha, idx) => {
-                const tr = document.createElement("tr");
-                const [dia, diaSemana] = linha;
-                
-                tr.innerHTML = `
-                    <td class="cell-dia">${dia}</td>
-                    <td class="cell-dia-semana">${diaSemana}</td>
-                `;
-                
-                cargos.forEach(cargo => {
-                    const celId = `${mesAtual}-18h-${idx}-${cargo}`;
-                    const td = document.createElement("td");
-                    const select = criarSelect(celId);
-                    
-                    if (dados18h[celId]) {
-                        select.value = dados18h[celId];
-                    }
-                    
-                    td.appendChild(select);
-                    tr.appendChild(td);
-                });
-                
-                tbody.appendChild(tr);
-            });
-        }
-
         function salvarDados() {
             const linhasAtuais = diasPorMes[mesAtual];
             const { missa11h, missa18h, missa19h } = separarMissasPorHorario(linhasAtuais);
             
-            // Salvar dados 11h
             missa11h.forEach((_, idx) => {
                 cargos.forEach(cargo => {
                     const celId = `${mesAtual}-11h-${idx}-${cargo}`;
@@ -1223,7 +1234,6 @@
                 });
             });
             
-            // Salvar dados 18h
             missa18h.forEach((_, idx) => {
                 cargos.forEach(cargo => {
                     const celId = `${mesAtual}-18h-${idx}-${cargo}`;
@@ -1234,7 +1244,6 @@
                 });
             });
             
-            // Salvar dados 19h
             missa19h.forEach((_, idx) => {
                 cargos.forEach(cargo => {
                     const celId = `${mesAtual}-19h-${idx}-${cargo}`;
@@ -1263,7 +1272,6 @@
             }
         }
 
-        // Funções para Cronograma Personalizado
         function popularSeletorLeitores() {
             const select = document.getElementById("selecionarLeitor");
             select.innerHTML = '<option value="">— Escolha um leitor —</option>';
@@ -1291,7 +1299,6 @@
 
             const escalas = [];
 
-            // Coletar escalas do leitor
             missa11h.forEach((linha, idx) => {
                 if (filtro11h) {
                     const [dia, diaSemana] = linha;
@@ -1334,10 +1341,8 @@
                 }
             });
 
-            // Ordenar por dia
             escalas.sort((a, b) => parseInt(a.dia) - parseInt(b.dia));
 
-            // Exibir
             document.getElementById("containerCronograma").style.display = "block";
             document.getElementById("nomeLeitorcronograma").textContent = leitor;
             document.getElementById("resumoCronograma").textContent = `Total de escalas em ${nomesMeses[mesAtual]} 2026: ${escalas.length}`;

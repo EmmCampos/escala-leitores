@@ -1161,17 +1161,22 @@
             
             headerClone.style.display = "block";
             
-            // Substituir todos os <select> por <span> com os valores reais
+            // Substituir todos os <select> por <span> com os valores reais salvos no localStorage
             const selects = tableClone.querySelectorAll("select");
             selects.forEach(select => {
+                const selectId = select.id;
+                const savedValue = aba === "11h15min" ? dados11h[selectId] : 
+                                   aba === "18h-domingo" ? dados18h[selectId] : 
+                                   aba === "19h-segsab" ? dados19h[selectId] : "";
+                
                 const span = document.createElement("span");
-                span.textContent = select.value || "— Selecionar —";
+                span.textContent = savedValue || "— Selecionar —";
                 span.style.fontSize = "13px";
                 span.style.padding = "8px 12px";
                 span.style.display = "block";
                 span.style.fontFamily = "inherit";
-                span.style.color = select.value ? "#1F2121" : "#999";
-                span.style.fontWeight = select.value ? "500" : "400";
+                span.style.color = savedValue ? "#1F2121" : "#999";
+                span.style.fontWeight = savedValue ? "500" : "400";
                 
                 select.parentNode.replaceChild(span, select);
             });
